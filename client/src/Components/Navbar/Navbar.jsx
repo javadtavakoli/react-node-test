@@ -9,6 +9,7 @@ import { MenuButton } from "@mui/base/MenuButton";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 import { logout } from "../../redux/action/user";
+import { getFormattedTime } from "../../utils/timeUtils";
 import {
   PiAlarm,
   PiBell,
@@ -104,16 +105,17 @@ const Navbar = ({ setShowSidebar, showSidebar, open, setOpen }) => {
   const dispatch = useDispatch();
 
   /////////////////////////////////////////// STATES ////////////////////////////////////////////////
-  const [date, setDate] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState(getFormattedTime());
   const [openPasswordChange, setOpenPasswordChange] = useState(false);
 
   /////////////////////////////////////////// USE EFFECTS ////////////////////////////////////////////
   useEffect(() => {
-    var timer = setInterval(() => setDate(new Date()), 1000);
-    return function cleanup() {
-      clearInterval(timer);
-    };
-  });
+    const timer = setInterval(() => {
+      setCurrentTime(getFormattedTime());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
   useEffect(() => {
     dispatch(getNotifications());
     dispatch(getTasks());
@@ -145,7 +147,7 @@ const Navbar = ({ setShowSidebar, showSidebar, open, setOpen }) => {
             </IconButton>
             <div>
               <p className="text-sky-400 text-xl gap-1 flex items-center">
-                <PiTimerLight className="text-[25px]" /> {date.toLocaleTimeString()}
+                <PiTimerLight className="text-[25px]" /> {currentTime}
               </p>
             </div>
           </div>
